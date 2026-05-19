@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحدي الإدارة الصفية - أ. غدير المرواني</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">    <style>
+        :root {
+            --indigo:  #3B1F6E;
+            --violet:  #5B2D9E;
+            --gold:    #D4AF37;
+            --gold-lt: #F5D76E;
+            --cream:   #FFF9EF;
+            --ink:     #1A0A3B;
+            --shadow:  0 30px 80px rgba(59,31,110,0.35);
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            min-height: 100vh;
+            background: var(--indigo);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(91,45,158,0.6) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 80% 80%, rgba(212,175,55,0.12) 0%, transparent 55%),
+                radial-gradient(ellipse 50% 70% at 50% 50%, rgba(27,12,60,0.8) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .orb { position: fixed; border-radius: 50%; filter: blur(60px); pointer-events: none; z-index: 0; }
+        .orb-1 { width: 400px; height: 400px; background: rgba(212,175,55,0.07); top: -100px; left: -100px; animation: float1 12s ease-in-out infinite; }
+        .orb-2 { width: 300px; height: 300px; background: rgba(91,45,158,0.3); bottom: -80px; right: -80px; animation: float2 10s ease-in-out infinite; }
+        .orb-3 { width: 200px; height: 200px; background: rgba(212,175,55,0.08); top: 50%; right: 10%; animation: float3 14s ease-in-out infinite; }
+        @keyframes float1 { 0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)} }
+        @keyframes float2 { 0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,-40px)} }
+        @keyframes float3 { 0%,100%{transform:translateY(0)}50%{transform:translateY(-30px)} }
+
+        .particles, .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+
+        .particle {
+            position: absolute; width: 2px; height: 2px;
+            background: var(--gold); border-radius: 50%; opacity: 0;
+            animation: particleFloat linear infinite;
+        }
+        @keyframes particleFloat {
+            0%   { opacity:0; transform:translateY(100vh) scale(0); }
+            10%  { opacity:0.6; }
+            90%  { opacity:0.3; }
+            100% { opacity:0; transform:translateY(-20px) scale(1); }
+        }
+        .star {
+            position: absolute; background: rgba(255,255,255,0.6);
+            border-radius: 50%; animation: twinkle linear infinite;
+        }
+        @keyframes twinkle { 0%,100%{opacity:0.1;transform:scale(1)} 50%{opacity:0.8;transform:scale(1.3)} }
+
+        .game-card { width: 100%; max-width: 660px; position: relative; z-index: 10; }
+
+        .card-inner {
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 36px;
+            border: 1px solid rgba(212,175,55,0.25);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.05) inset, var(--shadow), 0 0 80px rgba(212,175,55,0.07);
+            overflow: hidden;
+            position: relative;
+        }
+        .card-inner::before {
+            content: ''; position: absolute; top: 0; left: 10%; width: 80%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent); z-index: 2;
+        }
+
+        .p-bar { height: 4px; background: rgba(255,255,255,0.07); position: relative; overflow: visible; }
+        .p-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--gold-lt), var(--gold));
+            background-size: 200% 100%;
+            width: 0%; transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+            animation: shimmer 2s linear infinite; position: relative;
+        }
+        .p-fill::after {
+            content: ''; position: absolute; right: -6px; top: 50%;
+            transform: translateY(-50%); width: 12px; height: 12px;
+            background: var(--gold); border-radius: 50%; box-shadow: 0 0 12px var(--gold);
+        }
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+        .screen { display: none; padding: 55px 45px; text-align: center; }
+        .screen.active { display: block; animation: slideUp 0.5s cubic-bezier(0.4,0,0.2,1); }
+        @keyframes slideUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+        h1 { font-family:'Amiri',serif; font-size:2.6rem; color:var(--cream); line-height:1.3; margin-bottom:8px; text-shadow:0 2px 20px rgba(212,175,55,0.3); }
+        .subtitle { color:rgba(255,255,255,0.45); font-size:1rem; margin-top:8px; }
+        .teacher-sig { color:var(--gold); font-weight:800; font-size:1.2rem; margin-top:18px; display:inline-flex; align-items:center; gap:8px; }
+        .teacher-sig::before,.teacher-sig::after { content:'◆'; font-size:0.6rem; opacity:0.7; }
+
+        .hero-icon { font-size:5.5rem; display:inline-block; animation:bounce 2.5s ease-in-out infinite; filter:drop-shadow(0 10px 30px rgba(212,175,55,0.4)); }
+        @keyframes bounce { 0%,100%{transform:translateY(0) rotate(-3deg)} 50%{transform:translateY(-12px) rotate(3deg)} }
+
+        .divider { width:60px; height:2px; background:linear-gradient(90deg,transparent,var(--gold),transparent); margin:20px auto; }
+
+        input[type="text"] {
+            width:100%; padding:18px 24px; border-radius:18px;
+            border:1.5px solid rgba(212,175,55,0.25);
+            background:rgba(255,255,255,0.06);
+            margin:24px 0; font-size:1.15rem; font-family:'Tajawal',sans-serif;
+            text-align:center; color:var(--cream); outline:none; transition:0.3s;
+        }
+        input::placeholder { color:rgba(255,255,255,0.3); }
+        input:focus { border-color:var(--gold); background:rgba(212,175,55,0.07); box-shadow:0 0 25px rgba(212,175,55,0.15); }
+
+        .btn {
+            display:inline-flex; align-items:center; justify-content:center; gap:10px;
+            background:linear-gradient(135deg, var(--gold) 0%, #B8922A 100%);
+            color:var(--ink); padding:18px 48px; border-radius:100px; border:none;
+            font-family:'Tajawal',sans-serif; font-size:1.25rem; font-weight:800;
+            cursor:pointer; transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+            width:100%; box-shadow:0 8px 30px rgba(212,175,55,0.3); position:relative; overflow:hidden;
+        }
+        .btn::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent); transition:left 0.5s; }
+        .btn:hover::before { left:100%; }
+        .btn:hover { transform:translateY(-3px); box-shadow:0 16px 40px rgba(212,175,55,0.4), 0 0 0 4px rgba(212,175,55,0.15); }
+
+        .quiz-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; }
+        .q-counter { background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.3); border-radius:30px; padding:8px 20px; color:var(--gold); font-weight:700; font-size:0.95rem; }
+        .timer-badge { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:30px; padding:8px 20px; color:rgba(255,255,255,0.8); font-weight:700; font-size:1rem; display:flex; align-items:center; gap:6px; transition:0.3s; }
+        .timer-badge.urgent { background:rgba(239,68,68,0.15); border-color:rgba(239,68,68,0.4); color:#FCA5A5; animation:urgentPulse 0.5s ease-in-out infinite alternate; }
+        @keyframes urgentPulse { from{box-shadow:none} to{box-shadow:0 0 15px rgba(239,68,68,0.4)} }
+
+        #q-text { font-size:1.25rem; color:var(--cream); margin-bottom:30px; line-height:1.8; text-align:right; font-weight:500; }
+
+        .option-item {
+            background:rgba(255,255,255,0.04); padding:20px 24px; border-radius:18px; margin-bottom:14px;
+            cursor:pointer; transition:all 0.25s cubic-bezier(0.4,0,0.2,1); font-weight:600; font-size:1rem;
+            border:1.5px solid rgba(255,255,255,0.08); text-align:right; line-height:1.6;
+            color:rgba(255,255,255,0.75); position:relative; overflow:hidden;
+        }
+        .option-item:hover { border-color:rgba(212,175,55,0.5); background:rgba(212,175,55,0.07); color:var(--cream); transform:translateX(-6px); box-shadow:4px 0 0 var(--gold) inset, 0 8px 24px rgba(0,0,0,0.2); }
+
+        .score-ring {
+            display:inline-flex; align-items:center; justify-content:center;
+            width:160px; height:160px; border-radius:50%;
+            background:conic-gradient(var(--gold) 0deg, rgba(255,255,255,0.06) 0deg);
+            box-shadow:0 0 40px rgba(212,175,55,0.2), 0 0 0 8px rgba(212,175,55,0.07);
+            margin:20px auto; position:relative;
+        }
+        .score-ring-inner { width:130px; height:130px; border-radius:50%; background:rgba(27,12,60,0.95); display:flex; flex-direction:column; align-items:center; justify-content:center; }
+        .score-num { font-size:3.2rem; font-weight:900; color:var(--gold); line-height:1; }
+        .score-denom { font-size:1rem; color:rgba(255,255,255,0.4); margin-top:2px; }
+.feedback-view {
+            position:absolute; top:0; left:0; width:100%; height:100%;
+            background:rgba(20,8,45,0.97); backdrop-filter:blur(10px);
+            display:none; flex-direction:column; justify-content:center; align-items:center;
+            padding:50px 40px; z-index:100;
+        }
+        .feedback-view.active { display:flex; animation:fadeIn 0.3s ease; }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+        #f-icon { font-size:5.5rem; display:block; margin-bottom:10px; animation:popIn 0.4s cubic-bezier(0.4,0,0.2,1); }
+        @keyframes popIn { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
+        #f-status { font-size:1.8rem; font-weight:800; color:var(--cream); margin-bottom:10px; }
+
+        .exp-card {
+            background:rgba(255,255,255,0.04); padding:24px 28px; border-radius:20px; margin:20px 0;
+            border:1.5px solid rgba(212,175,55,0.2); border-right:4px solid var(--gold);
+            text-align:right; position:relative; overflow:hidden;
+        }
+        .exp-card::before { content:'❝'; position:absolute; top:-10px; left:15px; font-size:4rem; color:rgba(212,175,55,0.08); font-family:Georgia,serif; line-height:1; }
+        .exp-card strong { color:var(--gold); display:block; margin-bottom:10px; font-size:0.95rem; }
+        .exp-card span { color:rgba(255,255,255,0.65); line-height:1.8; font-size:1rem; }
+
+        .btn-secondary { background:transparent; border:1.5px solid rgba(212,175,55,0.4); color:var(--gold); width:auto; min-width:200px; }
+        .btn-secondary:hover { background:rgba(212,175,55,0.1); border-color:var(--gold); }
+
+        .thanks-footer { margin-top:24px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.07); }
+        .thanks-footer p { color:rgba(255,255,255,0.35); font-size:0.95rem; }
+
+        @media (max-width:480px) {
+            .screen { padding:40px 25px; }
+            h1 { font-size:2rem; }
+            #q-text { font-size:1.1rem; }
+            .score-num { font-size:2.6rem; }
+            .score-ring { width:130px; height:130px; }
+            .score-ring-inner { width:105px; height:105px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+<div class="particles" id="particles"></div>
+<div class="stars" id="stars"></div>
+
+<div class="game-card">
+    <div class="card-inner">
+        <div class="p-bar"><div class="p-fill" id="p-fill"></div></div>
+
+        <div id="screen-start" class="screen active">
+            <span class="hero-icon">&#x1F3C6;</span>
+            <div class="divider"></div>
+            <h1>&#x062A;&#x062D;&#x062F;&#x064A; &#x0627;&#x0644;&#x0625;&#x062F;&#x0627;&#x0631;&#x0629; &#x0627;&#x0644;&#x0635;&#x0641;&#x064A;&#x0629;</h1>
+            <p class="subtitle">&#x0627;&#x062E;&#x062A;&#x0628;&#x0627;&#x0631; &#x0643;&#x0641;&#x0627;&#x064A;&#x0627;&#x062A; &#x0645;&#x0647;&#x0646;&#x064A; &#x0644;&#x0644;&#x0645;&#x0639;&#x0644;&#x0645;&#x0627;&#x062A; &#x0627;&#x0644;&#x0645;&#x062A;&#x0645;&#x064A;&#x0632;&#x0627;&#x062A;</p>
+            <div class="teacher-sig">&#x0625;&#x0639;&#x062F;&#x0627;&#x062F; &#x0627;&#x0644;&#x0645;&#x0639;&#x0644;&#x0645;&#x0629;: &#x063A;&#x062F;&#x064A;&#x0631; &#x0627;&#x0644;&#x0645;&#x0631;&#x0648;&#x0627;&#x0646;&#x064A;</div>
+            <button class="btn" style="margin-top:45px;" onclick="showNaming()">&#x0627;&#x0628;&#x062F;&#x0626;&#x064A; &#x0627;&#x0644;&#x062A;&#x062D;&#x062F;&#x064A; &#x1F680;</button>
+        </div>
+
+        <div id="screen-naming" class="screen">
+            <h2 style="color:var(--cream);font-size:2rem;font-family:'Amiri',serif;">&#x0645;&#x0631;&#x062D;&#x0628;&#x0627;&#x064B; &#x0628;&#x0643;&#x0650; &#x0641;&#x064A; &#x0627;&#x0644;&#x0645;&#x064A;&#x062F;&#x0627;&#x0646;</h2>
+            <p class="subtitle" style="margin-top:10px;">&#x0641;&#x0636;&#x0644;&#x0627;&#x064B; &#x0623;&#x062F;&#x062E;&#x0644;&#x064A; &#x0627;&#x0633;&#x0645;&#x0643;&#x0650; &#x0644;&#x062A;&#x0633;&#x062C;&#x064A;&#x0644; &#x0646;&#x062A;&#x064A;&#x062C;&#x062A;&#x0643;&#x0650; &#x0641;&#x064A; &#x0644;&#x0648;&#x062D;&#x0629; &#x0627;&#x0644;&#x0634;&#x0631;&#x0641;</p>
+            <div class="divider"></div>
+            <input type="text" id="teacher-name" placeholder="&#x0627;&#x0644;&#x0627;&#x0633;&#x0645; &#x0627;&#x0644;&#x0631;&#x0628;&#x0627;&#x0639;&#x064A;">
+            <button class="btn" onclick="startQuiz()">&#x0627;&#x0646;&#x0637;&#x0644;&#x0627;&#x0642; &#x1F3C1;</button>
+        </div>
+
+        <div id="screen-quiz" class="screen">
+            <div class="quiz-header">
+                <div class="q-counter">&#x0633;&#x0624;&#x0627;&#x0644; <span id="q-idx">1</span> / 10</div>
+                <div class="timer-badge" id="timer-badge">&#x23F1;&#xFE0F; <span id="timer">20</span></div>
+            </div>
+            <h2 id="q-text"></h2>
+            <div id="options-area"></div>
+        </div>
+
+        <div id="screen-result" class="screen">
+            <h1 style="font-size:2rem;">&#x062A;&#x0645; &#x0627;&#x0644;&#x0625;&#x0646;&#x062C;&#x0627;&#x0632; &#x0628;&#x0646;&#x062C;&#x0627;&#x062D;! &#x2728;</h1>
+            <div class="score-ring" id="score-ring">
+                <div class="score-ring-inner">
+                    <span class="score-num" id="score-num">0</span>
+                    <span class="score-denom">&#x0645;&#x0646; 10</span>
+                </div>
+            </div>
+            <div class="thanks-footer">
+                <p>&#x0634;&#x0643;&#x0631;&#x064B;&#x0627; &#x0644;&#x0645;&#x0634;&#x0627;&#x0631;&#x0643;&#x062A;&#x0643;&#x0645; &#x1F337;</p>
+                <div class="teacher-sig" style="font-size:1.3rem;margin-top:10px;">&#x0625;&#x0639;&#x062F;&#x0627;&#x062F; &#x0627;&#x0644;&#x0645;&#x0639;&#x0644;&#x0645;&#x0629;: &#x063A;&#x062F;&#x064A;&#x0631; &#x0627;&#x0644;&#x0645;&#x0631;&#x0648;&#x0627;&#x0646;&#x064A;</div>
+            </div>
+            <button class="btn" style="margin-top:30px;" onclick="location.reload()">&#x0625;&#x0639;&#x0627;&#x062F;&#x0629; &#x0627;&#x0644;&#x062A;&#x062D;&#x062F;&#x064A; &#x1F504;</button>
+        </div>
+
+        <div id="feedback" class="feedback-view">
+            <span id="f-icon">&#x1F31F;</span>
+            <h2 id="f-status"></h2>
+            <div class="exp-card">
+                <strong>&#x0627;&#x0644;&#x062A;&#x0641;&#x0633;&#x064A;&#x0631; &#x0627;&#x0644;&#x062A;&#x0631;&#x0628;&#x0648;&#x064A;:</strong>
+                <span id="f-exp"></span>
+            </div>
+            <button class="btn btn-secondary" onclick="nextStep()">&#x0627;&#x0644;&#x0645;&#x062A;&#x0627;&#x0628;&#x0639;&#x0629; &#x2B05;&#xFE0F;</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    // Particles
+    var pCont = document.getElementById('particles');
+    for (var i = 0; i < 30; i++) {
+        var p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = (Math.random() * 100) + '%';
+        var sz = (Math.random() * 3 + 1) + 'px';
+        p.style.width = sz; p.style.height = sz;
+        p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+        p.style.animationDelay = (Math.random() * 15) + 's';
+        pCont.appendChild(p);
+    }
+    // Stars
+    var sCont = document.getElementById('stars');
+    for (var j = 0; j < 60; j++) {
+        var s = document.createElement('div');
+        s.className = 'star';
+        var size = Math.random() * 2 + 0.5;
+        s.style.width = size + 'px'; s.style.height = size + 'px';
+        s.style.top = (Math.random() * 100) + '%';
+        s.style.left = (Math.random() * 100) + '%';
+        s.style.animationDuration = (Math.random() * 4 + 2) + 's';
+        s.style.animationDelay = (Math.random() * 5) + 's';
+        sCont.appendChild(s);
+    }
+})();
+
+var quiz = [
+    { q: "\u0645\u0627 \u0647\u064a \u0627\u0644\u0627\u0633\u062a\u0631\u0627\u062a\u064a\u062c\u064a\u0629 \u0627\u0644\u0623\u0646\u0633\u0628 \u0644\u0645\u0639\u0644\u0645\u0629 \u0648\u0627\u062c\u0647\u062a '\u0633\u0644\u0648\u0643\u0627\u064b \u0645\u0634\u0627\u063a\u0628\u0627\u064b' \u0637\u0641\u064a\u0641\u0627\u064b \u0623\u062b\u0646\u0627\u0621 \u0627\u0644\u0634\u0631\u062d \u062f\u0648\u0646 \u0631\u063a\u0628\u0629 \u0641\u064a \u0642\u0637\u0639 \u062a\u0633\u0644\u0633\u0644 \u0627\u0644\u062f\u0631\u0633\u061f", o: ["\u0627\u0644\u062a\u0648\u0642\u0641 \u0639\u0646 \u0627\u0644\u0643\u0644\u0627\u0645 \u0648\u0627\u0644\u0646\u0638\u0631 \u0644\u0644\u0637\u0627\u0644\u0628\u0629 \u0628\u062d\u0632\u0645", "\u0627\u0633\u062a\u062e\u062f\u0627\u0645 \u0627\u0644\u0625\u0634\u0627\u0631\u0627\u062a \u063a\u064a\u0631 \u0627\u0644\u0644\u0641\u0638\u064a\u0629 \u0623\u0648 \u0627\u0644\u062a\u062c\u0627\u0647\u0644 \u0627\u0644\u0645\u0646\u0638\u0645", "\u062a\u0648\u0628\u064a\u062e \u0627\u0644\u0637\u0627\u0644\u0628\u0629 \u0645\u0628\u0627\u0634\u0631\u0629 \u0623\u0645\u0627\u0645 \u0632\u0645\u064a\u0644\u0627\u062a\u0647\u0627", "\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0637\u0627\u0644\u0628\u0629 \u0644\u0644\u0645\u0631\u0634\u062f\u0629 \u0627\u0644\u0637\u0644\u0627\u0628\u064a\u0629 \u0641\u0648\u0631\u0627\u064b"], a: 1, e: "\u0627\u0644\u0625\u0634\u0627\u0631\u0627\u062a \u063a\u064a\u0631 \u0627\u0644\u0644\u0641\u0638\u064a\u0629 \u062a\u062d\u0627\u0641\u0638 \u0639\u0644\u0649 \u0632\u062e\u0645 \u0627\u0644\u062f\u0631\u0633 \u0648\u062a\u0645\u0646\u0639 \u062a\u062d\u0648\u0644 \u0627\u0644\u0633\u0644\u0648\u0643 \u0627\u0644\u0628\u0633\u064a\u0637 \u0625\u0644\u0649 \u0645\u0648\u0627\u062c\u0647\u0629." },
+    { q: "\u0623\u064a \u0645\u0646 \u0627\u0644\u0622\u062a\u064a \u064a\u0639\u062a\u0628\u0631 '\u0625\u062f\u0627\u0631\u0629' \u0648\u0644\u064a\u0633 '\u0627\u0646\u0636\u0628\u0627\u0637\u0627\u064b' \u0635\u0641\u064a\u0627\u064b\u061f", o: ["\u0648\u0636\u0639 \u0639\u0642\u0648\u0628\u0627\u062a \u0635\u0627\u0631\u0645\u0629 \u0644\u0644\u0645\u062e\u0627\u0644\u0641\u0627\u062a", "\u062a\u0646\u0638\u064a\u0645 \u0625\u062c\u0631\u0627\u0621\u0627\u062a \u0631\u0648\u062a\u064a\u0646\u064a\u0629 \u0644\u062a\u0648\u0632\u064a\u0639 \u0627\u0644\u0623\u062f\u0648\u0627\u062a \u0648\u0627\u0644\u0645\u0634\u0627\u0631\u0643\u0629", "\u0625\u0631\u063a\u0627\u0645 \u0627\u0644\u0637\u0627\u0644\u0628\u0627\u062a \u0639\u0644\u0649 \u0627\u0644\u0635\u0645\u062a \u0637\u0648\u0627\u0644 \u0627\u0644\u062d\u0635\u0629", "\u0627\u0633\u062a\u062e\u062f\u0627\u0645 \u0627\u0644\u062a\u0647\u062f\u064a\u062f \u0628\u0627\u0644\u062d\u0631\u0645\u0627\u0646 \u0645\u0646 \u0627\u0644\u062f\u0631\u062c\u0627\u062a"], a: 1, e: "\u0627\u0644\u0625\u062f\u0627\u0631\u0629 \u062a\u062a\u0639\u0644\u0642 \u0628\u0627\u0644\u0639\u0645\u0644\u064a\u0627\u062a \u0648\u0627\u0644\u0625\u062c\u0631\u0627\u0621\u0627\u062a \u0627\u0644\u062a\u064a \u062a\u0645\u0646\u0639 \u062d\u062f\u0648\u062b \u0627\u0644\u0641\u0648\u0636\u0649 \u0642\u0628\u0644 \u0648\u0642\u0648\u0639\u0647\u0627." },
+    { q: "\u0645\u0641\u0647\u0648\u0645 '\u0632\u062e\u0645 \u0627\u0644\u062a\u0639\u0644\u0645' (Momentum) \u0641\u064a \u0646\u0638\u0631\u064a\u0629 \u0643\u0648\u064a\u0646\u064a\u0646 \u064a\u0639\u0646\u064a:", o: ["\u0633\u0631\u0639\u0629 \u0627\u0644\u0645\u0639\u0644\u0645\u0629 \u0641\u064a \u0625\u0646\u0647\u0627\u0621 \u0627\u0644\u0645\u0646\u0647\u062c", "\u0627\u0633\u062a\u0645\u0631\u0627\u0631 \u062a\u062f\u0641\u0642 \u0627\u0644\u062f\u0631\u0633 \u062f\u0648\u0646 \u0627\u0646\u0642\u0637\u0627\u0639\u0627\u062a \u0623\u0648 \u062a\u0634\u062a\u062a", "\u0627\u0631\u062a\u0641\u0627\u0639 \u0635\u0648\u062a \u0627\u0644\u0645\u0639\u0644\u0645\u0629 \u0623\u062b\u0646\u0627\u0621 \u0627\u0644\u0634\u0631\u062d", "\u0643\u062b\u0631\u0629 \u0627\u0644\u0623\u0646\u0634\u0637\u0629 \u0627\u0644\u0635\u0641\u064a\u0629 \u0627\u0644\u0645\u062a\u062a\u0627\u0644\u064a\u0629"], a: 1, e: "\u0627\u0644\u0632\u062e\u0645 \u0647\u0648 \u0633\u0644\u0627\u0633\u0629 \u0627\u0646\u062a\u0642\u0627\u0644 \u0627\u0644\u0645\u0639\u0644\u0645\u0629 \u0645\u0646 \u0646\u0634\u0627\u0637 \u0644\u0622\u062e\u0631 \u062f\u0648\u0646 \u062b\u063a\u0631\u0627\u062a \u062a\u0633\u0645\u062d \u0628\u0627\u0644\u0645\u0644\u0644." },
+    { q: "\u0639\u0646\u062f \u062d\u062f\u0648\u062b \u0635\u0631\u0627\u0639 \u0628\u064a\u0646 \u0637\u0627\u0644\u0628\u062a\u064a\u0646 \u062f\u0627\u062e\u0644 \u0627\u0644\u0641\u0635\u0644\u060c \u0645\u0627 \u0647\u0648 \u0627\u0644\u062a\u0635\u0631\u0641 \u0627\u0644\u0625\u062f\u0627\u0631\u064a \u0627\u0644\u0623\u0648\u0644 \u0627\u0644\u0635\u062d\u064a\u062d\u061f", o: ["\u0627\u0644\u0627\u0633\u062a\u0645\u0631\u0627\u0631 \u0641\u064a \u0627\u0644\u0634\u0631\u062d \u0648\u062a\u062c\u0627\u0647\u0644 \u0627\u0644\u0645\u0648\u0642\u0641", "\u0639\u0632\u0644 \u0627\u0644\u0637\u0627\u0644\u0628\u062a\u064a\u0646 \u0648\u062a\u0647\u062f\u0626\u0629 \u0627\u0644\u0645\u0648\u0642\u0641 \u062b\u0645 \u0627\u0644\u062a\u062d\u0642\u064a\u0642 \u0644\u0627\u062d\u0642\u0627\u064b", "\u0625\u062e\u0631\u0627\u062c \u0627\u0644\u0637\u0627\u0644\u0628\u062a\u064a\u0646 \u062e\u0627\u0631\u062c \u0627\u0644\u0641\u0635\u0644 \u0641\u0648\u0631\u0627\u064b", "\u0633\u0624\u0627\u0644 \u0627\u0644\u0641\u0635\u0644 \u0639\u0646 \u0627\u0644\u0645\u062e\u0637\u0626 \u0645\u0646\u0647\u0627"], a: 1, e: "\u0627\u0644\u0647\u062f\u0641 \u0627\u0644\u0623\u0648\u0644 \u0647\u0648 \u0627\u0633\u062a\u0639\u0627\u062f\u0629 \u0623\u0645\u0646 \u0627\u0644\u0641\u0635\u0644 \u0648\u0627\u0633\u062a\u0645\u0631\u0627\u0631\u064a\u0629 \u0627\u0644\u062a\u0639\u0644\u0645\u060c \u062b\u0645 \u0645\u0639\u0627\u0644\u062c\u0629 \u0627\u0644\u0645\u0634\u0643\u0644\u0629 \u062a\u0631\u0628\u0648\u064a\u0627\u064b." },
+    { q: "\u0627\u0633\u062a\u062e\u062f\u0627\u0645 '\u0645\u0628\u062f\u0623 \u0628\u0631\u064a\u0645\u0627\u0643' (Premack Principle) \u0641\u064a \u0627\u0644\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0635\u0641\u064a\u0629 \u064a\u0639\u0646\u064a:", o: ["\u0631\u0628\u0637 \u0646\u0634\u0627\u0637 \u063a\u064a\u0631 \u0645\u062d\u0628\u0628 \u0628\u0646\u0634\u0627\u0637 \u0645\u062d\u0628\u0628 \u0643\u062a\u0639\u0632\u064a\u0632", "\u0639\u0642\u0627\u0628 \u0627\u0644\u0637\u0627\u0644\u0628\u0629 \u0628\u0627\u0644\u062d\u0631\u0645\u0627\u0646 \u0645\u0646 \u0627\u0644\u0646\u0634\u0627\u0637", "\u062a\u0648\u0632\u064a\u0639 \u0627\u0644\u0645\u0647\u0627\u0645 \u062d\u0633\u0628 \u0627\u0644\u062d\u0631\u0648\u0641 \u0627\u0644\u0623\u0628\u062c\u062f\u064a\u0629", "\u0645\u0646\u0639 \u0627\u0644\u0637\u0627\u0644\u0628\u0627\u062a \u0645\u0646 \u0627\u0644\u062d\u062f\u064a\u062b \u0627\u0644\u062c\u0627\u0646\u0628\u064a"], a: 0, e: "\u0645\u062b\u0644\u0627\u064b: '\u0625\u0630\u0627 \u0623\u0646\u0647\u064a\u0646\u0627 \u0627\u0644\u062a\u0645\u0631\u064a\u0646 \u0627\u0644\u0622\u0646\u060c \u0633\u0646\u0634\u0627\u0647\u062f \u0627\u0644\u0641\u064a\u062f\u064a\u0648 \u0627\u0644\u062a\u0639\u0644\u064a\u0645\u064a \u0627\u0644\u0645\u0645\u062a\u0639'." },
+    { q: "\u0623\u064a \u0645\u0646 \u0623\u0646\u0645\u0627\u0637 \u0627\u0644\u0645\u0639\u0644\u0645\u0627\u062a \u064a\u0639\u062a\u0628\u0631 \u0627\u0644\u0623\u0643\u062b\u0631 \u0641\u0627\u0639\u0644\u064a\u0629 \u0641\u064a \u0627\u0644\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0635\u0641\u064a\u0629\u061f", o: ["\u0627\u0644\u0646\u0645\u0637 \u0627\u0644\u062a\u0633\u0644\u0637\u064a (\u0627\u0644\u062d\u0627\u0632\u0645 \u062c\u062f\u0627\u064b)", "\u0627\u0644\u0646\u0645\u0637 \u0627\u0644\u062f\u064a\u0645\u0642\u0631\u0627\u0637\u064a (\u0627\u0644\u0645\u062a\u0641\u0627\u0639\u0644)", "\u0627\u0644\u0646\u0645\u0637 \u0627\u0644\u0641\u0648\u0636\u0648\u064a (\u0627\u0644\u0645\u062a\u0633\u0627\u0647\u0644)", "\u0627\u0644\u0646\u0645\u0637 \u0627\u0644\u062a\u0642\u0644\u064a\u062f\u064a \u0627\u0644\u0645\u062d\u0627\u0636\u0631"], a: 1, e: "\u0627\u0644\u0646\u0645\u0637 \u0627\u0644\u062f\u064a\u0645\u0642\u0631\u0627\u0637\u064a \u064a\u0648\u0627\u0632\u0646 \u0628\u064a\u0646 \u0648\u0636\u0648\u062d \u0627\u0644\u0642\u0648\u0627\u0639\u062f \u0648\u062d\u0642\u0648\u0642 \u0627\u0644\u0637\u0627\u0644\u0628\u0627\u062a \u0648\u0643\u0631\u0627\u0645\u062a\u0647\u0646." },
+    { q: "\u062a\u0639\u062a\u0645\u062f \u0627\u0644\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0635\u0641\u064a\u0629 \u0627\u0644\u062d\u062f\u064a\u062b\u0629 \u0639\u0644\u0649 '\u0627\u0644\u0648\u0642\u0627\u064a\u0629' \u0623\u0643\u062b\u0631 \u0645\u0646 '\u0627\u0644\u0639\u0644\u0627\u062c' \u0645\u0646 \u062e\u0644\u0627\u0644:", o: ["\u0632\u064a\u0627\u062f\u0629 \u0643\u0645\u064a\u0629 \u0627\u0644\u0648\u0627\u062c\u0628\u0627\u062a \u0627\u0644\u0645\u0646\u0632\u0644\u064a\u0629", "\u0635\u064a\u0627\u063a\u0629 \u0642\u0648\u0627\u0639\u062f \u0635\u0641\u064a\u0629 \u0648\u0627\u0636\u062d\u0629 \u0648\u0645\u0634\u0627\u0631\u0643\u0629 \u0627\u0644\u0637\u0627\u0644\u0628\u0627\u062a \u0641\u064a\u0647\u0627", "\u0648\u0636\u0639 \u0643\u0627\u0645\u064a\u0631\u0627\u062a \u0645\u0631\u0627\u0642\u0628\u0629", "\u062a\u062e\u0648\u064a\u0641 \u0627\u0644\u0637\u0627\u0644\u0628\u0627\u062a \u0628\u0627\u0644\u0631\u0633\u0648\u0628"], a: 1, e: "\u0648\u0636\u0648\u062d \u0627\u0644\u0642\u0648\u0627\u0646\u064a\u0646 \u0648\u062a\u0634\u0627\u0631\u0643\u064a\u0629 \u0648\u0636\u0639\u0647\u0627 \u064a\u0632\u064a\u062f \u0645\u0646 \u0627\u0644\u062a\u0632\u0627\u0645 \u0627\u0644\u0637\u0627\u0644\u0628\u0627\u062a \u0630\u0627\u062a\u064a\u0627\u064b." },
+    { q: "\u0645\u0627 \u0647\u0648 '\u062a\u0623\u062b\u064a\u0631 \u0627\u0644\u0647\u0627\u0644\u0629' (Halo Effect) \u0627\u0644\u0630\u064a \u0642\u062f \u064a\u0624\u062b\u0631 \u0639\u0644\u0649 \u0639\u062f\u0627\u0644\u0629 \u0627\u0644\u0645\u0639\u0644\u0645\u0629\u061f", o: ["\u0627\u0644\u062a\u062d\u064a\u0632 \u0644\u0637\u0627\u0644\u0628\u0629 \u0628\u0633\u0628\u0628 \u062a\u0641\u0648\u0642\u0647\u0627 \u0627\u0644\u062f\u0631\u0627\u0633\u064a \u0627\u0644\u0633\u0627\u0628\u0642", "\u0627\u0633\u062a\u062e\u062f\u0627\u0645 \u0627\u0644\u0625\u0636\u0627\u0621\u0629 \u0627\u0644\u062c\u064a\u062f\u0629 \u0641\u064a \u0627\u0644\u0641\u0635\u0644", "\u062a\u0648\u0632\u064a\u0639 \u0627\u0644\u0637\u0627\u0644\u0628\u0627\u062a \u0641\u064a \u062d\u0644\u0642\u0627\u062a \u062f\u0627\u0626\u0631\u064a\u0629", "\u0645\u062f\u062d \u0627\u0644\u0637\u0627\u0644\u0628\u0629 \u0627\u0644\u0645\u062c\u062a\u0647\u062f\u0629 \u0628\u0627\u0633\u062a\u0645\u0631\u0627\u0631"], a: 0, e: "\u0642\u062f \u064a\u062c\u0639\u0644 \u0627\u0644\u0645\u0639\u0644\u0645\u0629 \u062a\u062a\u063a\u0627\u0636\u0649 \u0639\u0646 \u0623\u062e\u0637\u0627\u0621 \u0633\u0644\u0648\u0643\u064a\u0629 \u0644\u0637\u0627\u0644\u0628\u0629 \u0645\u062a\u0641\u0648\u0642\u0629 \u0645\u0645\u0627 \u064a\u062e\u0644 \u0628\u0627\u0644\u0639\u062f\u0644." },
+    { q: "\u0644\u0636\u0628\u0637 \u0627\u0644\u0641\u0635\u0644 \u0641\u064a \u0627\u0644\u062d\u0635\u0635 \u0627\u0644\u0623\u062e\u064a\u0631\u0629 \u0627\u0644\u062a\u064a \u064a\u0643\u062b\u0631 \u0641\u064a\u0647\u0627 \u0627\u0644\u0645\u0644\u0644\u060c \u064a\u0641\u0636\u0644 \u0627\u0633\u062a\u062e\u062f\u0627\u0645:", o: ["\u0627\u0644\u0645\u062d\u0627\u0636\u0631\u0629 \u0627\u0644\u0637\u0648\u064a\u0644\u0629", "\u0627\u0644\u062a\u0639\u0644\u0645 \u0628\u0627\u0644\u0644\u0639\u0628 \u0648\u0627\u0644\u0623\u0646\u0634\u0637\u0629 \u0627\u0644\u062a\u0641\u0627\u0639\u0644\u064a\u0629 \u0627\u0644\u0647\u0627\u062f\u0641\u0629", "\u0627\u0644\u0627\u062e\u062a\u0628\u0627\u0631\u0627\u062a \u0627\u0644\u0645\u0641\u0627\u062c\u0626\u0629", "\u0627\u0644\u062a\u0647\u062f\u064a\u062f \u0628\u0632\u064a\u0627\u062f\u0629 \u0627\u0644\u0648\u0627\u062c\u0628\u0627\u062a"], a: 1, e: "\u0627\u0644\u0623\u0646\u0634\u0637\u0629 \u0627\u0644\u062a\u0641\u0627\u0639\u0644\u064a\u0629 \u062a\u062d\u0627\u0641\u0638 \u0639\u0644\u0649 \u0627\u0646\u062a\u0628\u0627\u0647 \u0627\u0644\u0637\u0627\u0644\u0628\u0627\u062a \u0641\u064a \u0623\u0648\u0642\u0627\u062a \u0627\u0646\u062e\u0641\u0627\u0636 \u0627\u0644\u0637\u0627\u0642\u0629." },
+    { q: "\u0627\u0644\u0639\u0644\u0627\u0642\u0629 \u0628\u064a\u0646 \u0627\u0644\u0628\u064a\u0626\u0629 \u0627\u0644\u0645\u0627\u062f\u064a\u0629 (\u062a\u0631\u062a\u064a\u0628 \u0627\u0644\u0637\u0627\u0648\u0644\u0627\u062a) \u0648\u0627\u0644\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0635\u0641\u064a\u0629 \u0647\u064a:", o: ["\u0644\u0627 \u062a\u0648\u062c\u062f \u0639\u0644\u0627\u0642\u0629 \u0628\u064a\u0646\u0647\u0645\u0627", "\u0639\u0644\u0627\u0642\u0629 \u0648\u062b\u064a\u0642\u0629 \u062a\u0624\u062b\u0631 \u0639\u0644\u0649 \u0627\u0644\u062a\u0641\u0627\u0639\u0644 \u0648\u0633\u0647\u0648\u0644\u0629 \u0627\u0644\u062d\u0631\u0643\u0629 \u0648\u0627\u0644\u0636\u0628\u0637", "\u0639\u0644\u0627\u0642\u0629 \u062b\u0627\u0646\u0648\u064a\u0629 \u0644\u0627 \u062a\u0647\u0645 \u0627\u0644\u0645\u0639\u0644\u0645\u0629", "\u062a\u062e\u0635 \u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0645\u062f\u0631\u0633\u0629 \u0641\u0642\u0637"], a: 1, e: "\u062a\u0648\u0632\u064a\u0639 \u0627\u0644\u0645\u0643\u0627\u0646 \u064a\u062d\u062f\u062f \u0645\u0633\u0627\u0631\u0627\u062a \u0627\u0644\u062d\u0631\u0643\u0629 \u0648\u064a\u0642\u0644\u0644 \u0645\u0646 \u0641\u0631\u0635 \u0627\u0644\u0634\u063a\u0628." }
+];
+
+var current = 0;
+var score   = 0;
+var tName   = "";
+var clock   = null;
+var timeLeft = 20;
+
+function switchSc(id) {
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+}
+
+function showNaming() {
+    switchSc('screen-naming');
+}
+
+function startQuiz() {
+    var val = document.getElementById('teacher-name').value.trim();
+    if (!val) { alert("\u0641\u0636\u0644\u0627\u064b \u0627\u062f\u062e\u0644\u064a \u0627\u0633\u0645\u0643\u0650"); return; }
+    tName = val;
+    switchSc('screen-quiz');
+    loadQ();
+}
+
+function loadQ() {
+    timeLeft = 20;
+    var q = quiz[current];
+    document.getElementById('q-idx').innerText = current + 1;
+    document.getElementById('q-text').innerText = q.q;
+    document.getElementById('p-fill').style.width = (current / 10 * 100) + "%";
+    document.getElementById('timer-badge').classList.remove('urgent');
+    document.getElementById('timer').innerText = timeLeft;
+
+    var area = document.getElementById('options-area');
+    area.innerHTML = "";
+    q.o.forEach(function(opt, i) {
+        var div = document.createElement('div');
+        div.className = 'option-item';
+        div.innerText = opt;
+        div.style.animationDelay = (i * 0.07) + 's';
+        div.style.animation = 'slideUp 0.4s ease forwards';
+        div.style.opacity = '0';
+        (function(idx) { div.onclick = function() { check(idx); }; })(i);
+        area.appendChild(div);
+    });
+
+    clearInterval(clock);
+    clock = setInterval(function() {
+        timeLeft--;
+        document.getElementById('timer').innerText = timeLeft;
+        if (timeLeft <= 7) document.getElementById('timer-badge').classList.add('urgent');
+        if (timeLeft <= 0) { clearInterval(clock); check(-1); }
+    }, 1000);
+}
+
+function check(idx) {
+    clearInterval(clock);
+    var correct = quiz[current].a;
+    if (idx === correct) {
+        document.getElementById('f-status').innerText = "\u0631\u0627\u0626\u0639\u0629 \u0648\u0645\u062a\u0645\u064a\u0632\u0629! \uD83C\uDF1F";
+        document.getElementById('f-icon').innerText = "\uD83D\uDC4F";
+        score++;
+    } else {
+        document.getElementById('f-status').innerText = "\u062a\u062d\u062a\u0627\u062c \u0644\u0645\u0631\u0627\u062c\u0639\u0629 \u0627\u0644\u0645\u0641\u0647\u0648\u0645 \uD83D\uDCA1";
+        document.getElementById('f-icon').innerText = "\u274C";
+    }
+    document.getElementById('f-exp').innerText = quiz[current].e;
+    document.getElementById('feedback').classList.add('active');
+}
+
+function nextStep() {
+    document.getElementById('feedback').classList.remove('active');
+    current++;
+    if (current < 10) loadQ();
+    else finish();
+}
+
+async function finish() {
+    document.getElementById('p-fill').style.width = "100%";
+    switchSc('screen-result');
+
+    var el = document.getElementById('score-num');
+    var ring = document.getElementById('score-ring');
+    var n = 0;
+    var finalScore = score;
+    var ringTimer = setInterval(function() {
+        if (n >= finalScore) { clearInterval(ringTimer); return; }
+        n++;
+        el.innerText = n;
+        ring.style.background = 'conic-gradient(var(--gold) ' + (n / 10 * 360) + 'deg, rgba(255,255,255,0.06) 0deg)';
+    }, 120);
+}
+
+</script>
+
+</body>
+</html>
